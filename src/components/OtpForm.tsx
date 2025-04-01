@@ -1,15 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useState } from "react";
 import { useFormik } from "formik";
 import axios from "axios";
-import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
-interface OtpFormProps {
-  setStep: (step: "phone" | "otp" | "pin") => void;
-}
-
-export default function OtpForm({ setStep }: OtpFormProps) {
+export default function OtpForm() {
+  const { setStep, setOtpToken } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,12 +24,12 @@ export default function OtpForm({ setStep }: OtpFormProps) {
             headers: {
               sourceapp: "dashportal",
               otpfor: "login",
-              Authorization: "Bearer YOUR_BEARER_TOKEN",
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
             },
           }
         );
         if (response.data.token) {
-          document.cookie = `otpToken=${response.data.token}; path=/; max-age=3600`;
+          setOtpToken(response.data.token); // Store the OTP token in context
         }
         setError(null);
         setStep("pin");
