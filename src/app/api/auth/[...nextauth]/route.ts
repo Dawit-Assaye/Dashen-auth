@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
@@ -7,13 +9,13 @@ const handler = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        phoneNumber: { label: "Phone Number", type: "text" },
+        userName: { label: "Username", type: "text" },
         otpToken: { label: "OTP Token", type: "text" },
         pin: { label: "PIN", type: "password" },
       },
       async authorize(credentials) {
         if (
-          !credentials?.phoneNumber ||
+          !credentials?.userName ||
           !credentials?.otpToken ||
           !credentials?.pin
         ) {
@@ -21,7 +23,6 @@ const handler = NextAuth({
         }
 
         try {
-          // Step 3: Login with PIN using the OTP token
           const loginResponse = await axios.post(
             "https://sau.eaglelionsystems.com/v1.0/chatbirrapi/cpsauth/user/login",
             { password: credentials.pin },
@@ -29,17 +30,31 @@ const handler = NextAuth({
               headers: {
                 sourceapp: "dashportal",
                 Authorization: `Bearer ${credentials.otpToken}`,
+                "Content-Type": "application/json",
               },
             }
           );
 
+          if (loginResponse.data.statusCode !== 200) {
+            throw new Error(loginResponse.data.message || "Login failed");
+          }
+
           const user = {
-            id: credentials.phoneNumber, // Use phone number as the user ID
-            token: loginResponse.data.token,
+            id: loginResponse.data.data.user_id,
+            userName: credentials.userName,
+            token: loginResponse.data.data.accesstoken,
+            fullName: loginResponse.data.data.full_name,
+            userRole: loginResponse.data.data.user_role,
+            phoneNumber: loginResponse.data.data.phone_number,
           };
 
+          console.log("Authorize returning user:", user);
           return user;
         } catch (error: any) {
+          console.error(
+            "Authorize failed:",
+            error.response?.data || error.message
+          );
           throw new Error(
             error.response?.data?.message || "Authentication failed"
           );
@@ -54,18 +69,29 @@ const handler = NextAuth({
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.id = user.id;
+        token.phoneNumber = user.phoneNumber;
         token.authToken = user.token;
+        token.fullName = user.fullName;
+        token.userRole = user.userRole;
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
-      session.user.id = token.id as string;
-      session.user.token = token.authToken as string;
-      return session;
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id as string,
+          phoneNumber: token.phoneNumber as string,
+          token: token.authToken as string,
+          fullName: token.fullName as string,
+          userRole: token.userRole as string,
+        },
+      };
     },
   },
   pages: {
-    signIn: "/",
+    signIn: "/login",
   },
 });
 
