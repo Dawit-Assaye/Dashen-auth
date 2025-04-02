@@ -22,10 +22,11 @@ A Next.js authentication system for the Dashen Bank dashboard, built with the Ap
 
 ```bash
 npm install
-
+```
 3.Start the development server:
+```bash
  npm run dev
+```
 
 4.Open your browser and navigate to http://localhost:3000 to see the app in action.
 
-```
