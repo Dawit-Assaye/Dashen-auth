@@ -11,12 +11,12 @@ A Next.js authentication system for the Dashen Bank dashboard, built with the Ap
 - API calls with React Query and Axios
 
 ## Getting Started
-1. Clone the repository:
+
+1. Clone the repository:                                                                                                                                                                                                                                                                                                                                
    ```bash
    git clone https://github.com/dawit-assaye/dashen-auth.git
    cd dashen-auth
-   ```
-
+   ```                                                                                                                                                                                                                                                                                                                                                
 2.Install dependencies:
 
 ```bash
