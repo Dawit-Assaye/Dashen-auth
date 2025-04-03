@@ -4,6 +4,8 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST;
+
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
@@ -24,7 +26,7 @@ const handler = NextAuth({
 
         try {
           const loginResponse = await axios.post(
-            "https://sau.eaglelionsystems.com/v1.0/chatbirrapi/cpsauth/user/login",
+            `${API_HOST}user/login`,
             { password: credentials.pin },
             {
               headers: {

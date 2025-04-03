@@ -1,27 +1,16 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
-// Define a custom error type for API errors
-interface ApiError {
-  message: string;
-  response?: {
-    data?: {
-      message?: string;
-    };
-  };
-}
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST;
 
-// Custom hook for authentication API calls
 export const useAuthApi = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const requestOtp = async (userName: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
+  const requestOtpMutation = useMutation({
+    mutationFn: async (userName: string) => {
       const response = await axios.post(
-        "https://sau.eaglelionsystems.com/v1.0/chatbirrapi/cpsauth/otp/request/dashops",
+        `${API_HOST}otp/request/dashops`,
         { user_name: userName, send_option: "email" },
         {
           headers: {
@@ -31,28 +20,29 @@ export const useAuthApi = () => {
           },
         }
       );
-      if (response.data.status !== true) {
+      if (!response.data.status) {
         throw new Error(response.data.message || "Failed to request OTP");
       }
       return {
         accessToken: response.data.accesstoken,
         otpCode: response.data.otpcode,
       };
-    } catch (error: unknown) {
-      const err = error as AxiosError<ApiError>;
-      setError(err.response?.data?.message || "Failed to request OTP");
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    onError: (error: unknown) => {
+      setError((error as Error)?.message || "Failed to request OTP");
+    },
+  });
 
-  const verifyOtp = async (otpCode: string, otpToken: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
+  const verifyOtpMutation = useMutation({
+    mutationFn: async ({
+      otpCode,
+      otpToken,
+    }: {
+      otpCode: string;
+      otpToken: string;
+    }) => {
       const response = await axios.post(
-        "https://sau.eaglelionsystems.com/v1.0/chatbirrapi/cpsauth/otp/confirm/dashops",
+        `${API_HOST}otp/confirm/dashops`,
         { otpcode: otpCode },
         {
           headers: {
@@ -67,14 +57,17 @@ export const useAuthApi = () => {
         throw new Error("No access token returned from OTP verification");
       }
       return response.data.accesstoken;
-    } catch (error: unknown) {
-      const err = error as AxiosError<ApiError>;
-      setError(err.response?.data?.message || "OTP verification failed");
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    onError: (error: unknown) => {
+      setError((error as Error)?.message || "OTP verification failed");
+    },
+  });
 
-  return { requestOtp, verifyOtp, isLoading, error, setError };
+  return {
+    requestOtp: requestOtpMutation.mutateAsync,
+    verifyOtp: verifyOtpMutation.mutateAsync,
+    isLoading: requestOtpMutation.isPending || verifyOtpMutation.isPending,
+    error,
+    setError,
+  };
 };

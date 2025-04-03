@@ -1,7 +1,6 @@
 "use client";
 import { useAuth } from "../context/AuthContext";
 import { useFormik } from "formik";
-
 import Input from "./ui/Input";
 import Button from "./ui/Button";
 import OtpInput from "./ui/OtpInput";
@@ -39,20 +38,19 @@ export default function OtpForm() {
       const userName = values.userName.trim();
       try {
         if (!showOtpField) {
-          const { accessToken, otpCode } = await requestOtp(userName);
+          const result = await requestOtp(userName);
           setUserName(userName);
-          setOtpToken(accessToken);
-          setOtpCode(otpCode);
-          loginForm.setFieldValue("otp", otpCode);
+          setOtpToken(result.accessToken);
+          setOtpCode(result.otpCode);
+          loginForm.setFieldValue("otp", result.otpCode);
           setShowOtpField(true);
         } else {
           if (!otpCode) throw new Error("No OTP code available.");
-          const accessToken = await verifyOtp(values.otp, otpToken!);
-          setOtpToken(accessToken);
+          await verifyOtp({ otpCode: values.otp, otpToken: otpToken! });
           setStep("pin");
         }
-      } catch (error: any) {
-        // Error is handled by useAuthApi hook
+      } catch (error: unknown) {
+        // Error is handled by useAuthApi hook via onError callback
       }
     },
   });

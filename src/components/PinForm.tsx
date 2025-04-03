@@ -37,7 +37,6 @@ export default function PinForm() {
           userName,
           otpToken,
           pin: values.pin,
-          callbackUrl: "/dashboard",
           redirect: false,
         });
 
