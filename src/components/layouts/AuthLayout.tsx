@@ -63,7 +63,7 @@ export default function AuthLayout({
         <div className="flex flex-col items-center gap-6">
           <h1 className="text-3xl font-bold text-center z-10">Welcome to</h1>
           <h1 className="text-4xl font-bold text-center z-10">
-            DASHEN SUPER APP DASHBOARD
+            Dashen Super App Dashboard
           </h1>
         </div>
       </div>
