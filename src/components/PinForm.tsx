@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
 import { useFormik } from "formik";
 import { signIn } from "next-auth/react";
 import { useAuth } from "../context/AuthContext";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function PinForm() {
   const router = useRouter();
@@ -16,14 +15,10 @@ export default function PinForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const pinForm = useFormik({
-    initialValues: {
-      pin: "",
-    },
+    initialValues: { pin: "" },
     validate: (values) => {
       const errors: { pin?: string } = {};
-      if (!values.pin) {
-        errors.pin = "PIN is required";
-      }
+      if (!values.pin) errors.pin = "PIN is required";
       return errors;
     },
     onSubmit: async (values) => {
@@ -31,9 +26,9 @@ export default function PinForm() {
       setError(null);
 
       if (!otpToken) {
-        setError("No access token found. Please start the process again.");
-        setIsLoading(false);
+        setError("No access token found. Please start again.");
         setStep("userName");
+        setIsLoading(false);
         return;
       }
 
@@ -46,13 +41,9 @@ export default function PinForm() {
           redirect: false,
         });
 
-        if (result?.error) {
-          setError("Invalid PIN. Please try again.");
-        } else if (result?.ok) {
-          router.push("/dashboard");
-        } else {
-          setError("An unexpected error occurred. Please try again.");
-        }
+        if (result?.error) setError("Invalid PIN. Please try again.");
+        else if (result?.ok) router.push("/dashboard");
+        else setError("An unexpected error occurred.");
       } catch (err: any) {
         setError(err.message || "An unexpected error occurred");
       } finally {
@@ -76,22 +67,19 @@ export default function PinForm() {
             ? pinForm.errors.pin
             : undefined
         }
-      />{" "}
+      />
       <Button
         type="submit"
         variant="primary"
         size="lg"
         isLoading={isLoading}
         disabled={isLoading || !!pinForm.errors.pin}
-        className="w-full"
+        className="w-full mt-4"
       >
         Sign In
       </Button>
-      <p className="text-right text-sm text-blue-900 mt-2 cursor-pointer">
-        Forget PIN?
-      </p>
       {error && (
-        <div className="mb-4">
+        <div className="mt-4">
           <p className="text-red-500 text-sm">{error}</p>
           <button
             type="button"
@@ -106,6 +94,9 @@ export default function PinForm() {
           </button>
         </div>
       )}
+      <p className="text-right text-sm text-blue-900 mt-2 cursor-pointer">
+        Forget PIN?
+      </p>
     </form>
   );
 }

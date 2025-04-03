@@ -19,15 +19,12 @@ export default function OtpInput({
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const isInitialMount = useRef(true);
 
-  // Sync otpValues with external value prop only on initial mount
-  // or when value changes from outside the component
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
 
-    // Only update if the new value is different from current internal state
     const currentValue = otpValues.join("");
     if (value !== currentValue) {
       setOtpValues(value ? value.split("") : Array(6).fill(""));
@@ -41,7 +38,6 @@ export default function OtpInput({
       setOtpValues(newOtpValues);
       onChange(newOtpValues.join(""));
 
-      // Move focus to the next input
       if (inputValue && index < 5) {
         otpRefs.current[index + 1]?.focus();
       }
@@ -54,16 +50,14 @@ export default function OtpInput({
   ) => {
     if (e.key === "Backspace") {
       if (!otpValues[index]) {
-        // If current input is empty and backspace is pressed, move to previous input
         if (index > 0) {
           const newOtpValues = [...otpValues];
-          newOtpValues[index - 1] = ""; // Clear the previous input
+          newOtpValues[index - 1] = "";
           setOtpValues(newOtpValues);
           onChange(newOtpValues.join(""));
           otpRefs.current[index - 1]?.focus();
         }
       } else {
-        // If current input has a value, clear it but stay on the same input
         const newOtpValues = [...otpValues];
         newOtpValues[index] = "";
         setOtpValues(newOtpValues);
@@ -76,7 +70,6 @@ export default function OtpInput({
     }
   };
 
-  // Handle paste functionality
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text");
@@ -90,7 +83,6 @@ export default function OtpInput({
       setOtpValues(newOtpValues);
       onChange(newOtpValues.join(""));
 
-      // Focus on the next empty input or the last one
       const nextEmptyIndex = pastedDigits.length < 6 ? pastedDigits.length : 5;
       otpRefs.current[nextEmptyIndex]?.focus();
     }
