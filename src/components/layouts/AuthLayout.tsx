@@ -7,13 +7,12 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const dots = Array.from({ length: 20 }).map((_, i) => ({
+  const dots = Array.from({ length: 20 }, (_, i) => ({
     cx: Math.random() * 100,
     cy: Math.random() * 100,
     r: Math.random() * 1 + 0.5,
   }));
-
-  const lines = Array.from({ length: 5 }).map((_, i) => ({
+  const lines = Array.from({ length: 5 }, (_, i) => ({
     x1: Math.random() * 100,
     y1: Math.random() * 100,
     x2: Math.random() * 100,
@@ -24,93 +23,22 @@ export default function AuthLayout({
     <div className="min-h-screen flex">
       <div className="w-1/2 flex items-center justify-center text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-primary" />
-
         <svg
           className="absolute inset-0 w-full h-full"
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
         >
-          <circle
-            cx="0"
-            cy="100"
-            r="10"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx="0"
-            cy="100"
-            r="20"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx="0"
-            cy="100"
-            r="30"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx="0"
-            cy="100"
-            r="40"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx="0"
-            cy="100"
-            r="50"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx="0"
-            cy="100"
-            r="60"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx="0"
-            cy="100"
-            r="70"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx="0"
-            cy="100"
-            r="80"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx="0"
-            cy="100"
-            r="90"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx="0"
-            cy="100"
-            r="100"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
-            strokeWidth="0.5"
-          />
-
+          {Array.from({ length: 10 }, (_, i) => (
+            <circle
+              key={`arc-${i}`}
+              cx="0"
+              cy="100"
+              r={(i + 1) * 10}
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.1)"
+              strokeWidth="0.5"
+            />
+          ))}
           {dots.map((dot, i) => (
             <circle
               key={`dot-${i}`}
@@ -120,7 +48,6 @@ export default function AuthLayout({
               fill="rgba(255, 255, 255, 0.2)"
             />
           ))}
-
           {lines.map((line, i) => (
             <line
               key={`line-${i}`}
@@ -133,8 +60,6 @@ export default function AuthLayout({
             />
           ))}
         </svg>
-
-        {/* Text */}
         <div className="flex flex-col items-center gap-6">
           <h1 className="text-3xl font-bold text-center z-10">Welcome to</h1>
           <h1 className="text-4xl font-bold text-center z-10">

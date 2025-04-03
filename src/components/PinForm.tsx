@@ -44,8 +44,8 @@ export default function PinForm() {
         if (result?.error) setError("Invalid PIN. Please try again.");
         else if (result?.ok) router.push("/dashboard");
         else setError("An unexpected error occurred.");
-      } catch (err: any) {
-        setError(err.message || "An unexpected error occurred");
+      } catch (error: any) {
+        setError(error?.message || "An unexpected error occurred");
       } finally {
         setIsLoading(false);
       }

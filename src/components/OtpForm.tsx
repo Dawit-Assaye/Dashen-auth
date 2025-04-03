@@ -1,5 +1,4 @@
 "use client";
-
 import { useAuth } from "../context/AuthContext";
 import { useFormik } from "formik";
 
@@ -52,7 +51,9 @@ export default function OtpForm() {
           setOtpToken(accessToken);
           setStep("pin");
         }
-      } catch (err) {}
+      } catch (error: any) {
+        // Error is handled by useAuthApi hook
+      }
     },
   });
 
