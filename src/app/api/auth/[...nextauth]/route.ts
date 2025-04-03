@@ -42,19 +42,14 @@ const handler = NextAuth({
           const user = {
             id: loginResponse.data.data.user_id,
             userName: credentials.userName,
+            email: loginResponse.data.data.email,
             token: loginResponse.data.data.accesstoken,
             fullName: loginResponse.data.data.full_name,
             userRole: loginResponse.data.data.user_role,
             phoneNumber: loginResponse.data.data.phone_number,
           };
-
-          console.log("Authorize returning user:", user);
           return user;
         } catch (error: any) {
-          console.error(
-            "Authorize failed:",
-            error.response?.data || error.message
-          );
           throw new Error(
             error.response?.data?.message || "Authentication failed"
           );
@@ -62,9 +57,6 @@ const handler = NextAuth({
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
   callbacks: {
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
@@ -73,6 +65,7 @@ const handler = NextAuth({
         token.authToken = user.token;
         token.fullName = user.fullName;
         token.userRole = user.userRole;
+        token.email = user.email;
       }
       return token;
     },
@@ -86,9 +79,13 @@ const handler = NextAuth({
           token: token.authToken as string,
           fullName: token.fullName as string,
           userRole: token.userRole as string,
+          email: token.email as string,
         },
       };
     },
+  },
+  session: {
+    strategy: "jwt",
   },
   pages: {
     signIn: "/login",

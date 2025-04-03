@@ -3,11 +3,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #162069;
+  --red: #ff0000;
 }
 
 @theme inline {
   --color-background: var(--foreground);
   --color-foreground: var(--background);
+  --color-primary: var(--primary);
+  --color-destructive: var(--red);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,6 +20,8 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --primary: #162069;
+    --destructive: var(--red);
   }
 }
 

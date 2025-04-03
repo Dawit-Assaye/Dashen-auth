@@ -5,8 +5,12 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { signIn } from "next-auth/react";
 import { useAuth } from "../context/AuthContext";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
+import { useRouter } from "next/navigation";
 
 export default function PinForm() {
+  const router = useRouter();
   const { userName, otpToken, setStep } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,32 +38,23 @@ export default function PinForm() {
       }
 
       try {
-        console.log("Attempting to sign in with:", {
-          userName,
-          otpToken,
-          pin: values.pin,
-        });
         const result = await signIn("credentials", {
           userName,
           otpToken,
           pin: values.pin,
-          callbackUrl: "/dashboard", // Let NextAuth.js handle the redirect
+          callbackUrl: "/dashboard",
+          redirect: false,
         });
 
-        console.log("Sign-in result:", result);
-
         if (result?.error) {
-          setError(result.error);
-          console.error("Sign-in error:", result.error);
+          setError("Invalid PIN. Please try again.");
+        } else if (result?.ok) {
+          router.push("/dashboard");
         } else {
-          console.log(
-            "Sign-in successful, NextAuth.js should redirect to /dashboard"
-          );
-          // No manual redirect needed since callbackUrl is specified
+          setError("An unexpected error occurred. Please try again.");
         }
       } catch (err: any) {
         setError(err.message || "An unexpected error occurred");
-        console.error("Login failed:", err);
       } finally {
         setIsLoading(false);
       }
@@ -68,6 +63,33 @@ export default function PinForm() {
 
   return (
     <form onSubmit={pinForm.handleSubmit} className="w-full max-w-sm">
+      <Input
+        label="Enter PIN"
+        type="password"
+        name="pin"
+        onChange={pinForm.handleChange}
+        value={pinForm.values.pin}
+        placeholder="Enter PIN"
+        disabled={isLoading}
+        error={
+          pinForm.touched.pin && pinForm.errors.pin
+            ? pinForm.errors.pin
+            : undefined
+        }
+      />{" "}
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        isLoading={isLoading}
+        disabled={isLoading || !!pinForm.errors.pin}
+        className="w-full"
+      >
+        Sign In
+      </Button>
+      <p className="text-right text-sm text-blue-900 mt-2 cursor-pointer">
+        Forget PIN?
+      </p>
       {error && (
         <div className="mb-4">
           <p className="text-red-500 text-sm">{error}</p>
@@ -84,33 +106,6 @@ export default function PinForm() {
           </button>
         </div>
       )}
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          Enter PIN
-        </label>
-        <input
-          type="password"
-          name="pin"
-          onChange={pinForm.handleChange}
-          value={pinForm.values.pin}
-          className="w-full border rounded p-2"
-          placeholder="Enter PIN"
-          disabled={isLoading}
-        />
-        {pinForm.touched.pin && pinForm.errors.pin && (
-          <p className="text-red-500 text-sm mt-1">{pinForm.errors.pin}</p>
-        )}
-      </div>
-      <button
-        type="submit"
-        className="bg-blue-900 text-white px-4 py-2 rounded w-full disabled:opacity-50"
-        disabled={isLoading || !!pinForm.errors.pin}
-      >
-        {isLoading ? "Signing In..." : "Sign In"}
-      </button>
-      <p className="text-right text-sm text-blue-900 mt-2 cursor-pointer">
-        Forget PIN?
-      </p>
     </form>
   );
 }
