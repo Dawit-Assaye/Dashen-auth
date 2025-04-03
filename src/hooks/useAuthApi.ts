@@ -1,6 +1,17 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useState } from "react";
 
+// Define a custom error type for API errors
+interface ApiError {
+  message: string;
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
+// Custom hook for authentication API calls
 export const useAuthApi = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +38,8 @@ export const useAuthApi = () => {
         accessToken: response.data.accesstoken,
         otpCode: response.data.otpcode,
       };
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<ApiError>;
       setError(err.response?.data?.message || "Failed to request OTP");
       throw err;
     } finally {
@@ -55,7 +67,8 @@ export const useAuthApi = () => {
         throw new Error("No access token returned from OTP verification");
       }
       return response.data.accesstoken;
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<ApiError>;
       setError(err.response?.data?.message || "OTP verification failed");
       throw err;
     } finally {

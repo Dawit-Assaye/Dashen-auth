@@ -7,14 +7,12 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Generate random positions and sizes for dots
   const dots = Array.from({ length: 20 }).map((_, i) => ({
-    cx: Math.random() * 100, // Random x position (0-100)
-    cy: Math.random() * 100, // Random y position (0-100)
-    r: Math.random() * 1 + 0.5, // Random radius between 0.5 and 1.5
+    cx: Math.random() * 100,
+    cy: Math.random() * 100,
+    r: Math.random() * 1 + 0.5,
   }));
 
-  // Generate random diagonal lines
   const lines = Array.from({ length: 5 }).map((_, i) => ({
     x1: Math.random() * 100,
     y1: Math.random() * 100,
@@ -24,18 +22,14 @@ export default function AuthLayout({
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Side */}
       <div className="w-1/2 flex items-center justify-center text-white relative overflow-hidden">
-        {/* Background Color */}
         <div className="absolute inset-0 bg-primary" />
 
-        {/* SVG Pattern */}
         <svg
           className="absolute inset-0 w-full h-full"
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
         >
-          {/* Concentric Arcs (Existing) */}
           <circle
             cx="0"
             cy="100"
@@ -117,7 +111,6 @@ export default function AuthLayout({
             strokeWidth="0.5"
           />
 
-          {/* Random Dots */}
           {dots.map((dot, i) => (
             <circle
               key={`dot-${i}`}
@@ -128,7 +121,6 @@ export default function AuthLayout({
             />
           ))}
 
-          {/* Random Diagonal Lines */}
           {lines.map((line, i) => (
             <line
               key={`line-${i}`}
