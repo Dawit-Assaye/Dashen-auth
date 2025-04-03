@@ -4,7 +4,7 @@ A Next.js authentication system for the Dashen Bank dashboard, built with the Ap
 
 ## Features
 
-- Three-step authentication flow: Phone number → OTP → PIN
+- Three-step authentication flow: Username → OTP → PIN
 - Protected routes using middleware
 - Responsive UI with Tailwind CSS
 - Form handling with Formik
