@@ -21,7 +21,7 @@ export default function AuthLayout({
 
   return (
     <div className="min-h-screen flex">
-      <div className="w-1/2 flex items-center justify-center text-white relative overflow-hidden">
+      <div className="w-1/2 flex items-center justify-center text-white relative overflow-hidden max-sm:hidden">
         <div className="absolute inset-0 bg-primary" />
         <svg
           className="absolute inset-0 w-full h-full"
@@ -69,7 +69,7 @@ export default function AuthLayout({
       </div>
 
       {/* Right Side */}
-      <div className="w-1/2 flex flex-col items-center justify-center p-8 gap-6 bg-background text-foreground">
+      <div className="w-1/2 flex flex-col items-center justify-center p-8 gap-6 bg-background text-foreground max-sm:w-full">
         <Image
           src="/dashen_logo.png"
           alt="Dashen Bank"
